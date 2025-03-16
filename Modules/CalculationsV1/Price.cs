@@ -1,6 +1,6 @@
 ﻿using LethalLevelLoader;
 
-namespace DynamicMoonRatings.Modules.Calculations
+namespace DynamicMoonRatings.Modules.CalculationsV1
 {
     internal class Price
     {
@@ -16,7 +16,7 @@ namespace DynamicMoonRatings.Modules.Calculations
             {
                 priceModifier = 1;
             }*/
-            priceModifier = routePrice;
+            priceModifier = routePrice * 10;
             return priceModifier;
         }
     }

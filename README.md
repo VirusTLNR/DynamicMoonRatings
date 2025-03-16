@@ -1,93 +1,41 @@
-# Lethal Company Mod Template
+# Dynamic Moon Ratings
 
-Thank you for using the mod template! Here are a few tips to help you on your journey:
+Dynamic Moon Ratings aims to be the mod that gives moon ratings an actual point.
 
-## Versioning
+## Features
+- Two Usage Modes:
+    Risk -> Ratings calculation including scrap value. No moon scrap modification.
+    Difficulty -> Ratings calculation excluding scrap value. Does modify moon scrap based off the rating provided.
 
-BepInEx uses [semantic versioning, or semver](https://semver.org/), for the mod's version info.
-To increment it, you can either modify the version tag in the `.csproj` file directly, or use your IDE's UX to increment the version. Below is an example of modifying the `.csproj` file directly:
+- Three display Modes:
+    'A' -> shows just a letter like vanilla moons (when speedrunning mode is enabled, this will be forced into A### mode)
+    'A###' -> shows the rating, with the first number replaced with a vanilla style letter.
+    '####' -> shows the rating only as a number. this is the only mode that shows the true rating value.
+    
+    Note: 'A' and 'A###' will show F- and S+ for ratings outside of the 0 to 7000 range.
 
-```xml
-<!-- BepInEx Properties -->
-<PropertyGroup>
-    <AssemblyName>VirusTLNR.SmartMoonRatings</AssemblyName>
-    <Product>SmartMoonRatings</Product>
-    <!-- Change to whatever version you're currently on. -->
-    <Version>1.0.0</Version>
-</PropertyGroup>
-```
+- Version config selection for both ratings and scrap spawning (if in difficulty mode) so even when the mod updates, you can still revert to the settings you prefer, or use newer versions. Buggy versions of calculations maybe removed, or modified, which will be noted in the changelog.
 
-Your IDE will have the setting in `Package` or `NuGet` under `General` or `Metadata`, respectively.
+- Configuration of base scrap generated level for a 0 rated moon (50/100 -> 1500/3000 for min/max allowing you to have extreme low scrap games, extreme high scrap games, as well as normal games (default value should be balanced for a vanilla game))
 
-## Logging
+- [Coming Soon] Speedrunning Mode:
+    Once released, speedrunning mode will force you into 'A###' or '####' display mode and will display all your settings for the mod on screen as "speed running" verification, including versions used and the moon rating for purposes of speedrunning.
 
-A logger is provided to help with logging to the console.
-You can access it by doing `Plugin.Logger` in any class outside the `Plugin` class.
 
-***Please use*** `LogDebug()` ***whenever possible, as any other log method
-will be displayed to the console and potentially cause performance issues for users.***
+## Ratings Calculation Details
+- LLL -> Uses the original LLL moon rating calculation, applied to all moons. The displayed value is the LLL rating multiplied by 3.5 to fit it into the same scale as V1, the rating order and gap will be identical to how LLL rates them, without interference from moon creators.
 
-If you chose to do so, make sure you change the following line in the `BepInEx.cfg` file to see the Debug messages:
+- V1 -> Rating = ((((enemies + price + cruiser) - scrap) * weather) / time) .. this leads to vanilla configured Experimentation having a rating of 14342 in difficulty mode and 14032 in risk mode when tested (weather not checked), Difficulty Mode uses a fixed value of 1000 for SCRAP.
+    Example(Risk Mode): [Moon]41 Experimentation       -> (([Enemies]18927.78 + [Price]0 + [Cruiser]0) - [Scrap]1387.5) x [Weather]0.8 / [Time]1 = [Total]14032.22
+    Example(Difficulty Mode): [Moon]41 Experimentation -> (([Enemies]18927.78 + [Price]0 + [Cruiser]0) - [Scrap]1000)   x [Weather]0.8 / [Time]1 = [Total]14342.22
+    
+    Note: displayed rating is the above rating divided by 10. This is to be functional compatibility wise with the dictionary used to sort ratings (which often fails with lower numbers that often lead to the same numbers being used)
 
-```toml
-[Logging.Console]
+## Scrap Generation Details (Difficulty Mode Only)
+- V1 -> ScrapGenMod = ((100 + (ratingNumber + quotaNumber + dayNumber)) / 100)
+        ratingNumber = (rating / 200) // 1% per 200 rating.
+        quotaNumber = (quota / 50) // 1% per 50 quota
+        dayNumber = (current day) // 1% per 1 days spent
 
-# ... #
-
-## Which log levels to show in the console output.
-# Setting type: LogLevel
-# Default value: Fatal, Error, Warning, Message, Info
-# Acceptable values: None, Fatal, Error, Warning, Message, Info, Debug, All
-# Multiple values can be set at the same time by separating them with , (e.g. Debug, Warning)
-LogLevels = All
-```
-
-## Harmony
-
-This template uses harmony. For more specifics on how to use it, look at
-[the HarmonyX GitHub wiki](https://github.com/BepInEx/HarmonyX/wiki) and
-[the Harmony docs](https://harmony.pardeike.net/).
-
-To make a new harmony patch, just use `[HarmonyPatch]` before any class you make that has a patch in it.
-
-Then in that class, you can use
-`[HarmonyPatch(typeof(ClassToPatch), nameof(ClassToPatch.MethodToPatch))]`
-where `ClassToPatch` is the class you're patching (ie `TVScript`), and `MethodToPatch` is the method you're patching (ie `SwitchTVLocalClient`).
-
-Then you can use
-[the appropriate prefix, postfix, transpiler, or finalizer](https://harmony.pardeike.net/articles/patching.html) attribute.
-
-_While you can use_ `return false;` _in a prefix patch,
-it is **HIGHLY DISCOURAGED** as it can **AND WILL** cause compatibility issues with other mods._
-
-For example, we want to add a patch that will debug log the current players' position.
-We have the following postfix patch patching the `SwitchTVLocalClient` method
-in `TVScript`:
-
-```csharp
-using HarmonyLib;
-
-namespace SmartMoonRatings.Patches;
-
-[HarmonyPatch(typeof(TVScript))]
-public class ExampleTVPatch
-{
-    [HarmonyPatch(nameof(TVScript.SwitchTVLocalClient))]
-    [HarmonyPrefix]
-    private static void SwitchTvPrefix(TVScript __instance)
-    {
-        /*
-         *  When the method is called, the TV will be turning off when we want to
-         *  turn the lights on and vice-versa. At that time, the TV's tvOn field
-         *  will be the opposite of what it's doing, ie it'll be on when turning off.
-         *  So, we want to set the lights to what the tv's state was
-         *  when this method is called.
-         */
-        StartOfRound.Instance.shipRoomLights.SetShipLightsBoolean(__instance.tvOn);
-    }
-}
-```
-
-In this case we include the type of the class we're patching in the attribute
-before our `ExampleTVPatch` class,
-as our class will only patch the `TVScript` class.
+   In V1, day 1, 130 quota using 300/600 base scrap, should have scrap ranging from 300-2000 (estimate) depending on moon rating. (i got 572-1145 on Rainy Experimntation and 1355-2711 on Rainy StarlancerZero.)
+-  In V1, day 37, 3900ish quota, using 300/600 base scrap, should have scrap ranging from 800-3500 (estimate) depending on moon rating. (i got 939-1878 on Stormy Experimentation and 1622-3245 on Clear Weathered StarlancerZero)

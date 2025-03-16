@@ -1,6 +1,6 @@
 ﻿using LethalLevelLoader;
 
-namespace DynamicMoonRatings.Modules.Calculations
+namespace DynamicMoonRatings.Modules.CalculationsV1
 {
     internal class Scrap
     {
@@ -22,7 +22,7 @@ namespace DynamicMoonRatings.Modules.Calculations
             float factorySizeMultiplier = sL.factorySizeMultiplier;
 
             //total scrap divided by number of items, divided by rough distance
-            float scrapBaseLine = (scrapAverageTotal / scrapAverageItems / factorySizeMultiplier);
+            float scrapBaseLine = (scrapAverageTotal / scrapAverageItems / factorySizeMultiplier) / 2;
             //float scrapBaseLine = scrapAverageModifier;
 
             return scrapBaseLine;

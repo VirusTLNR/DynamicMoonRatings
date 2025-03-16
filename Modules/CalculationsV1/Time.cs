@@ -1,6 +1,6 @@
 ﻿using LethalLevelLoader;
 
-namespace DynamicMoonRatings.Modules.Calculations
+namespace DynamicMoonRatings.Modules.CalculationsV1
 {
     internal class Time
     {

@@ -1,41 +1,65 @@
 ﻿using LethalLevelLoader;
-using DynamicMoonRatings.Modules.Calculations;
+using DynamicMoonRatings.Modules;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using DynamicMoonRatings.Modules.CalculationsLLL;
+using DynamicMoonRatings.Modules.CalculationsV1;
 
 namespace DynamicMoonRatings.Modules
 {
     internal static class RatingsCalculation
     {
-        internal static int CalculateDifficulty(ExtendedLevel level)
+        internal static int RatingSelector(ExtendedLevel level)
+        {
+            int newRating = -1; //for incase the rating calculation fails so we can revert back to the original rating //not implemented yet
+            switch(Plugin.ratingsVersion)
+            {
+                case "CUSTOM":
+                    newRating = CustomModes.GetCustomRating(level);
+                    break;
+                case "LLL":
+                    newRating = CalculateDifficultyLLL(level); 
+                    break;
+                case "V1":
+                    newRating = CalculateDifficultyV1(level);
+                    break;
+            }
+            return newRating;
+        }
+
+        internal static int CalculateDifficultyLLL(ExtendedLevel level)
+        {
+            int tempResult = LLL.CalculateSameAsLLL(level);
+            int result = (int)(float)(tempResult * 3.5f);
+            string displayResult = ModifyDisplayedValue(result);
+            Plugin.Logger.LogError(
+                "[Moon]" + level.SelectableLevel.PlanetName.ToString() +
+                "       = [LLLRating]" + tempResult +
+                "       = [ModTotal]" + result +
+                "       = [DisplayedRating]" + displayResult
+                );
+            //Plugin.Logger.LogInfo("TerminalDisplayResult = " + displayResult);
+            level.SelectableLevel.riskLevel = displayResult;
+            return (int)result;
+        }
+
+        internal static int CalculateDifficultyV1(ExtendedLevel level)
         {
             string moon = level.SelectableLevel.PlanetName.ToString();
             //Plugin.Logger.LogError("Moon Name = " + moon);
-            float enemies = Enemies.EnemiesCalc(level) * 5f;
+            float enemies = CalculationsV1.Enemies.EnemiesCalc(level) * 5f;
             //Plugin.Logger.LogWarning("Enemies = +" + enemies);
-            float price = Price.PriceCalc(level) * 2f;
+            float price = CalculationsV1.Price.PriceCalc(level) * 2f;
             //Plugin.Logger.LogWarning("Price = +" + price);
-            float cruiser = Cruiser.CruiserCalc(level) * 2f;
+            float cruiser = CalculationsV1.Cruiser.CruiserCalc(level) * 2f;
             //Plugin.Logger.LogWarning("Cruiser = +" + cruiser);
-            float scrap = (Plugin.usageMode?Scrap.ScrapCalc(level) * 30f:1000); //risk mode = calculation, difficulty mode = 1000
+            float scrap = (Plugin.usageMode=="Risk Mode"? CalculationsV1.Scrap.ScrapCalc(level) * 30f:1000); //risk mode = calculation, difficulty mode = 1000
             //Plugin.Logger.LogWarning("Scrap = -" + scrap);
-            float weather = Weather.WeatherCalc(level);
+            float weather = CalculationsV1.Weather.WeatherCalc(level);
             //Plugin.Logger.LogWarning("Weather = x" + weather);
-            float time = Time.TimeCalc(level);
+            float time = CalculationsV1.Time.TimeCalc(level);
             //Plugin.Logger.LogWarning("Time = /" + time);
-
-
-            Plugin.Logger.LogError(
-                "[Moon]" + moon +
-                "           -> (([Enemies]" + enemies +
-                "       + [Price]" + price +
-                "       + [Cruiser]" + cruiser +
-                ")      - [Scrap]" + scrap +
-                ")      x [Weather]" + weather +
-                "       / [Time]" + time
-                );
-
 
             float result = 0;
             //result = result + (((enemies * 0.25f) + (price * 0.1f) + (cruiser * 0.1f)) - (scrap * 1.5f)); //enemies - (scrap + price balance)
@@ -44,58 +68,67 @@ namespace DynamicMoonRatings.Modules
             result = result / (time);
 
             //Plugin.Logger.LogInfo("SortingResult = " + result.ToString("00"));
-
             string displayResult = ModifyDisplayedValue(result);
 
-
+            Plugin.Logger.LogError(
+                "[Moon]" + moon +
+                "           -> (([Enemies]" + enemies +
+                "       + [Price]" + price +
+                "       + [Cruiser]" + cruiser +
+                ")      - [Scrap]" + scrap +
+                ")      x [Weather]" + weather +
+                "       / [Time]" + time +
+                "       = [Total]" + result +
+                "       = [DisplayedRating]" + displayResult
+                //(Plugin.usageMode != "Risk Mode" ?"       = [ScrapGen]" + ScrapGeneration.ScrapGenSelector(RoundManager.Instance):"") //cant be done as it causes errors
+                );
             //Plugin.Logger.LogInfo("TerminalDisplayResult = " + displayResult);
-
             level.SelectableLevel.riskLevel = displayResult;
             return (int)result;
         }
 
         internal static string ModifyDisplayedValue(float rating)
         {
-            int n = Plugin.displayMode; //0 = letter+num, 1 = letter, 2 = num
+            string n = Plugin.displayMode; //0 = letter+num, 1 = letter, 2 = num
             string rLetter = string.Empty;
             string rNumber = string.Empty;
-            float displayRating = rating / 6;
-            if (n == 0 || n == 1)
+            float displayRating = rating / 10;
+            if (n.Contains("A"))
             {
                 if (displayRating >= 0 && displayRating <= 999)
                 {
                     rLetter = "F";
-                    rNumber = displayRating.ToString("00");
+                    rNumber = (0.1f * displayRating).ToString("000");
                 }
                 else if (displayRating >= 1000 && displayRating <= 1999)
                 {
                     rLetter = "E";
-                    rNumber = displayRating.ToString("00");
+                    rNumber = (0.1f * displayRating).ToString("000");
                 }
                 else if (displayRating >= 2000 && displayRating <= 2999)
                 {
                     rLetter = "D";
-                    rNumber = displayRating.ToString("00");
+                    rNumber = (0.1f * displayRating).ToString("000");
                 }
                 else if (displayRating >= 3000 && displayRating <= 3999)
                 {
                     rLetter = "C";
-                    rNumber = displayRating.ToString("00");
+                    rNumber = (0.1f * displayRating).ToString("000");
                 }
                 else if (displayRating >= 4000 && displayRating <= 4999)
                 {
                     rLetter = "B";
-                    rNumber = displayRating.ToString("00");
+                    rNumber = (0.1f * displayRating).ToString("000");
                 }
                 else if (displayRating >= 5000 && displayRating <= 5999)
                 {
                     rLetter = "A";
-                    rNumber = displayRating.ToString("00");
+                    rNumber = (0.1f * displayRating).ToString("000");
                 }
                 else if (displayRating >= 6000 && displayRating <= 6999)
                 {
                     rLetter = "S";
-                    rNumber = displayRating.ToString("00");
+                    rNumber = (0.1f * displayRating).ToString("000");
                 }
                 else if(displayRating >= 7000)
                 {
@@ -170,20 +203,20 @@ namespace DynamicMoonRatings.Modules
             }
             else
             {
-                rNumber = displayRating.ToString("00");
+                rNumber = displayRating.ToString("0000");
             }
             string outputValue = "#ERR#";
             switch (n)
             {
-                case 0:
+                case "A###":
                     //speed run mode = L## format
                     outputValue = string.Format("{0}{1}", rLetter, rNumber);
                     break;
-                case 1:
+                case "A":
                     //letter only
                     outputValue = string.Format("{0}", rLetter);
                     break;
-                case 2:
+                case "####":
                     //number only
                     outputValue = string.Format("{0}", rNumber);
                     break;

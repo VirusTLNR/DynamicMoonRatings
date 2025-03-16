@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 using static LethalLib.Modules.Enemies;
 
-namespace DynamicMoonRatings.Modules.Calculations
+namespace DynamicMoonRatings.Modules.CalculationsV1
 {
     internal class Enemies
     {
@@ -18,7 +18,8 @@ namespace DynamicMoonRatings.Modules.Calculations
             var outsideEnemies = sL.OutsideEnemies; //outside nighttime?
             var enemies = sL.Enemies; //inside enemies?
             //float enemiesModifier = checkEnemiesForAddedDifficulty(dayTimeEnemies, outsideEnemies, enemies);
-            float enemiesModifier = checkEnemies(level);
+            //float enemiesModifier = (checkEnemies(level) * 3) + ((maxDaytimeEnemyPowerCount + maxEnemyPowerCount + maxOutsideEnemyPowerCount) * 30);
+            float enemiesModifier = (checkEnemies(level) * 3) + ((checkAveragePower(dayTimeEnemies, maxDaytimeEnemyPowerCount) + checkAveragePower(outsideEnemies, maxOutsideEnemyPowerCount) + checkAveragePower(enemies, maxEnemyPowerCount)));
             return enemiesModifier;
         }
 
@@ -63,6 +64,26 @@ namespace DynamicMoonRatings.Modules.Calculations
                 enemyDifficultyModifier += ((enemy.enemyType.PowerLevel * 100) / (enemy.rarity / 10));
             }
             return (enemyDifficultyModifier);
+        }
+
+        private static float checkAveragePower(List<SpawnableEnemyWithRarity> list, int maxPower)
+        {
+            int counter = 0;
+            float st = 0;
+            float total = 0;
+
+            foreach (SpawnableEnemyWithRarity enemy in list)
+            {
+                float ep = enemy.enemyType.PowerLevel;
+                float er = enemy.rarity;
+                float ev = ep * er;
+                counter++;
+                st += ev;
+                total = (st / counter) * maxPower;
+                //Plugin.Logger.LogWarning(enemy.enemyType.enemyName + "|" + ep.ToString() + "|" + er.ToString() + "|" + ev.ToString());
+            }
+            //Plugin.Logger.LogWarning("Total = " + total);
+            return total;
         }
 
         private static float checkEnemies(ExtendedLevel level)
