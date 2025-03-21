@@ -1,6 +1,6 @@
 # Dynamic Moon Ratings
 
-Dynamic Moon Ratings aims to be the mod that gives moon ratings an actual point.
+Dynamic Moon Ratings aims to be the mod that gives moon ratings an actual point. All clients need this mod installed.
 
 ## Features
 - Two Usage Modes:
