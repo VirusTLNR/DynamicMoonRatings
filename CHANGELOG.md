@@ -6,3 +6,4 @@
 - Added V1 Moon Ratings System to the config
 - Added V1 Scrap Generation System to the config
 - Added LLL Moon Ratings System to the config
+- Added Custom Moon Ratings System and Custom Tiers System to the config

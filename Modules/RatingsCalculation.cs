@@ -33,7 +33,7 @@ namespace DynamicMoonRatings.Modules
             int tempResult = LLL.CalculateSameAsLLL(level);
             int result = (int)(float)(tempResult * 3.5f);
             string displayResult = ModifyDisplayedValue(result);
-            Plugin.Logger.LogError(
+            Plugin.Logger.LogDebug(
                 "[Moon]" + level.SelectableLevel.PlanetName.ToString() +
                 "       = [LLLRating]" + tempResult +
                 "       = [ModTotal]" + result +
@@ -70,7 +70,7 @@ namespace DynamicMoonRatings.Modules
             //Plugin.Logger.LogInfo("SortingResult = " + result.ToString("00"));
             string displayResult = ModifyDisplayedValue(result);
 
-            Plugin.Logger.LogError(
+            Plugin.Logger.LogDebug(
                 "[Moon]" + moon +
                 "           -> (([Enemies]" + enemies +
                 "       + [Price]" + price +

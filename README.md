@@ -23,19 +23,16 @@ Dynamic Moon Ratings aims to be the mod that gives moon ratings an actual point.
 
 
 ## Ratings Calculation Details
+- CUSTOM -> Configure your own ratings and tiers
+
 - LLL -> Uses the original LLL moon rating calculation, applied to all moons. The displayed value is the LLL rating multiplied by 3.5 to fit it into the same scale as V1, the rating order and gap will be identical to how LLL rates them, without interference from moon creators.
 
-- V1 -> Rating = ((((enemies + price + cruiser) - scrap) * weather) / time) .. this leads to vanilla configured Experimentation having a rating of 14342 in difficulty mode and 14032 in risk mode when tested (weather not checked), Difficulty Mode uses a fixed value of 1000 for SCRAP.
-    Example(Risk Mode): [Moon]41 Experimentation       -> (([Enemies]18927.78 + [Price]0 + [Cruiser]0) - [Scrap]1387.5) x [Weather]0.8 / [Time]1 = [Total]14032.22
-    Example(Difficulty Mode): [Moon]41 Experimentation -> (([Enemies]18927.78 + [Price]0 + [Cruiser]0) - [Scrap]1000)   x [Weather]0.8 / [Time]1 = [Total]14342.22
-    
-    Note: displayed rating is the above rating divided by 10. This is to be functional compatibility wise with the dictionary used to sort ratings (which often fails with lower numbers that often lead to the same numbers being used)
+- V1 -> Rating = ((((enemies + price + cruiser) - scrap) * weather) / time) .., Difficulty Mode uses a fixed value of 1000 for SCRAP.
+    Note: displayed rating is the above rating divided by 10. This is so the moons can fit in a more suitable scale. (0-7000 in V1)
 
 ## Scrap Generation Details (Difficulty Mode Only)
 - V1 -> ScrapGenMod = ((100 + (ratingNumber + quotaNumber + dayNumber)) / 100)
         ratingNumber = (rating / 200) // 1% per 200 rating.
         quotaNumber = (quota / 50) // 1% per 50 quota
         dayNumber = (current day) // 1% per 1 days spent
-
-   In V1, day 1, 130 quota using 300/600 base scrap, should have scrap ranging from 300-2000 (estimate) depending on moon rating. (i got 572-1145 on Rainy Experimntation and 1355-2711 on Rainy StarlancerZero.)
--  In V1, day 37, 3900ish quota, using 300/600 base scrap, should have scrap ranging from 800-3500 (estimate) depending on moon rating. (i got 939-1878 on Stormy Experimentation and 1622-3245 on Clear Weathered StarlancerZero)
+    Note: this is made for a custom rating range of 0-7000.

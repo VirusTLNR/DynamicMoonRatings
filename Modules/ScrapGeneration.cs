@@ -35,7 +35,10 @@ namespace DynamicMoonRatings.Modules
             float dayNumber = sor.gameStats.daysSpent; //for every day in the game, add 1% to day multiplier
 
             //rating value
-            float rating = Modules.RatingsCalculation.RatingSelector(LevelManager.GetExtendedLevel(__instance.currentLevel)); //CHANGED TO USE THE RATINGS VERSION SELECTOR.. POTENTIALLY DIFFERENT SCRAP GEN VERSION AND RATING VERSION MAY CAUSE UNINTENDED EFFECTS
+            float origRating = Modules.RatingsCalculation.RatingSelector(LevelManager.GetExtendedLevel(__instance.currentLevel)); //CHANGED TO USE THE RATINGS VERSION SELECTOR.. POTENTIALLY DIFFERENT SCRAP GEN VERSION AND RATING VERSION MAY CAUSE UNINTENDED EFFECTS
+
+            //compatibility with CUSTOM ratings...
+            float rating = (Plugin.ratingsVersion == "CUSTOM" ? 10 : 1) * origRating; //10 x for CUSTOM, 1 x for others
 
             if (rating < 0) rating = 0; //cap at 0 (- not allowed)
             else if (rating > 70000) rating = 70000; //cap at 70000
@@ -46,8 +49,8 @@ namespace DynamicMoonRatings.Modules
             float moonMod = ((100 + (ratingNumber + quotaNumber + dayNumber)) / 100); //divide rating by 100 to get the rating as a percentage.
 
 
-            Plugin.Logger.LogError("Moon: " + __instance.currentLevel.PlanetName + " | Rating: " + rating.ToString() + " -> Rating%: " + ratingNumber + " | Day%: " + dayNumber + " | Quota%: " + quotaNumber);
-            Plugin.Logger.LogError("MoonModifier ((100%+(Rating%+Days%+Quota%))/100) -> " + moonMod.ToString());
+            Plugin.Logger.LogDebug("Moon: " + __instance.currentLevel.PlanetName + " | Rating: " + rating.ToString() + " -> Rating%: " + ratingNumber + " | Day%: " + dayNumber + " | Quota%: " + quotaNumber);
+            Plugin.Logger.LogDebug("MoonModifier ((100%+(Rating%+Days%+Quota%))/100) -> " + moonMod.ToString());
 
             int minScrapVal = (int)(moonMod * Plugin.difficultyModeMinScrapMod);
             int maxScrapVal = (int)(moonMod * Plugin.difficultyModeMaxScrapMod);
@@ -61,8 +64,8 @@ namespace DynamicMoonRatings.Modules
                 __instance.currentLevel.minScrap = minScrapTot;
                 __instance.currentLevel.maxScrap = MaxScrapTot;
             }
-            Plugin.Logger.LogError("ScrapValue -> " + minScrapVal + " - " + maxScrapVal);
-            Plugin.Logger.LogError("ScrapCount -> " + minScrapTot + " - " + MaxScrapTot);
+            Plugin.Logger.LogDebug("ScrapValue -> " + minScrapVal + " - " + maxScrapVal);
+            Plugin.Logger.LogDebug("ScrapCount -> " + minScrapTot + " - " + MaxScrapTot);
 
             //return minScrapVal + " - " + maxScrapVal + "(" + minScrapTot + " - " + MaxScrapTot + ")";
         }

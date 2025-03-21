@@ -1,3 +1,4 @@
+using DynamicMoonRatings.Modules;
 using HarmonyLib;
 using LethalLevelLoader;
 using System;
@@ -26,11 +27,49 @@ namespace DynamicMoonRatings.Patches
             return;
         }
 
-        /*[HarmonyPatch(nameof(LevelManager.PopulateDynamicRiskLevelDictionary))] //maybe i dont want to do this, and instead adapt it to my own things.
+        internal static Dictionary<string, int> DMRRiskLevelDictionary() //based off v1 tiers.. my own dictionary to bypass LLL's one that leads to conflicts with my code
+        {
+            Dictionary<string, int> sortingDict = new();
+            sortingDict.Add("F---", -9999);
+            sortingDict.Add("F--", -666);
+            sortingDict.Add("F-", -333);
+            sortingDict.Add("F", 0);
+            sortingDict.Add("F+", 333);
+            sortingDict.Add("E-", 666);
+            sortingDict.Add("E", 1000);
+            sortingDict.Add("E+", 1333);
+            sortingDict.Add("D-", 1666);
+            sortingDict.Add("D", 2000);
+            sortingDict.Add("D+", 2333);
+            sortingDict.Add("C-", 2666);
+            sortingDict.Add("C", 3000);
+            sortingDict.Add("C+", 3333);
+            sortingDict.Add("B-", 3666);
+            sortingDict.Add("B", 4000);
+            sortingDict.Add("B+", 4333);
+            sortingDict.Add("A-", 4666);
+            sortingDict.Add("A", 5000);
+            sortingDict.Add("A+", 5333);
+            sortingDict.Add("S-", 5666);
+            sortingDict.Add("S", 6000);
+            sortingDict.Add("S+", 6333);
+            sortingDict.Add("S++", 6666);
+            sortingDict.Add("S+++", 7000);
+            return sortingDict;
+        }
+
+        [HarmonyPatch(nameof(LevelManager.PopulateDynamicRiskLevelDictionary))] //maybe i dont want to do this, and instead adapt it to my own things.
         [HarmonyPrefix]
         public static bool RiskDictionaryPopulationPrefix()
         {
-            Dictionary<string, List<int>> vanillaRiskLevelDictionary = new Dictionary<string, List<int>>();
+            LevelManager.dynamicRiskLevelDictionary.Clear();
+            
+            foreach(KeyValuePair<string, int> kvp in DMRRiskLevelDictionary())
+            {
+                Plugin.Logger.LogDebug("adding rating tier " + kvp.Key + "---" + kvp.Value);
+                LevelManager.dynamicRiskLevelDictionary.Add(kvp.Key, kvp.Value);
+            }
+            /*Dictionary<string, List<int>> vanillaRiskLevelDictionary = new Dictionary<string, List<int>>();
 
             foreach (ExtendedLevel vanillaLevel in PatchedContent.VanillaExtendedLevels)
             {
@@ -105,9 +144,9 @@ namespace DynamicMoonRatings.Patches
 
             //foreach (KeyValuePair<string, int> dynamicRiskLevelPair in new Dictionary<string, int>(dynamicRiskLevelDictionary))
             //    DebugHelper.Log("Dynamic Risk Level Pair: " + dynamicRiskLevelPair.Key + " (" + dynamicRiskLevelPair.Value + ")", DebugType.Developer);
-
+            */
             return false;
-        }*/
+        }
 
         /*[HarmonyPatch(nameof(LevelManager.AssignCalculatedRiskLevels))]
         [HarmonyPrefix]

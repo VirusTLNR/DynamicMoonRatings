@@ -1,0 +1,10 @@
+{
+    "name": "DynamicMoonRatings",
+    "version_number": "1.0.0",
+    "website_url": "",
+    "description": "Standardised Moon Ratings system with customisation options for those who prefer that. Also has configuration to set scrap generation based off moon rating.",
+    "dependencies": [
+        "BepInEx-BepInExPack-5.4.2100",
+        "IAmBatby-LethalLevelLoader-1.4.11"
+    ]
+}

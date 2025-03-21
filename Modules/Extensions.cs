@@ -8,6 +8,7 @@ namespace DynamicMoonRatings.Modules
 {
     public static class Extensions
     {
+        [Obsolete] //no longer needed as the issue is bypassed, also this doesnt really work
         public static int SetNearestAvailableRating(this Dictionary<int, string> dict, ExtendedLevel level, int rating)
         {
             int modifiedRating = rating;

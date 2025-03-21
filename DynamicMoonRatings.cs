@@ -1,12 +1,16 @@
 using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
+using DynamicMoonRatings.Modules;
 using HarmonyLib;
+using LethalLevelLoader;
 using LobbyCompatibility.Attributes;
 using LobbyCompatibility.Configuration;
 using LobbyCompatibility.Enums;
 using System.Collections.Generic;
 using System.Reflection;
+using UnityEngine.UIElements;
+using static UnityEngine.Rendering.HighDefinition.ScalableSettingLevelParameter;
 
 namespace DynamicMoonRatings
 {
@@ -21,8 +25,10 @@ namespace DynamicMoonRatings
         internal static Harmony? Harmony { get; set; }
 
         internal static string displayMode, usageMode, ratingsVersion, scrapGenVersion;
-        internal static int difficultyModeMinScrapMod,difficultyModeMaxScrapMod;
+        internal static int difficultyModeMinScrapMod,difficultyModeMaxScrapMod, tierCount;
         internal static bool speedrunningMode;
+        internal static List<Modules.CustomTier> customTiers = new List<Modules.CustomTier>();
+        internal static List<Modules.CustomRating> customRatings = new List<Modules.CustomRating>();
 
         private void Awake()
         {
@@ -30,7 +36,7 @@ namespace DynamicMoonRatings
             Instance = this;
 
             SetupConfig();
-            RemoveOrphanedConfigs();
+            //RemoveOrphanedConfigs(); //cant do this here anymore, so now doing it on CLOSE
             Patch();
 
             Logger.LogInfo($"{PluginInfo.PLUGIN_GUID} v{PluginInfo.PLUGIN_VERSION} has loaded!");
@@ -81,11 +87,45 @@ namespace DynamicMoonRatings
                                                                                                 " \u000a'####' = like '4678'.",
                                                                                                 new AcceptableValueList<string>(new string[] { "A###", "A", "####" }))).Value;
             
-            //custom moon ratings
+            //custom tiers - must be before custom moons in the loading process as custom moons uses the first tiers rating as a default.
+            tierCount = ((BaseUnityPlugin)this).Config.Bind<int>("CustomTiers", "Tier Count", 10, new ConfigDescription("How many tiers you would like.. after changing this value you will need to start the game and close it to modify the other values below (WARNING - changing to a lower value will result in lost ratings/displayed names for higher tiers you no longer use!)", new AcceptableValueRange<int>(1, 25))).Value;
+            customTiers.Add(new CustomTier() { uniqueName = "Tier 0", minRating = int.MinValue, displayName = "Unknown" }); //for any moon without a config
+            for (int t = 1; t <= tierCount; t++) //allow for 25 custom tiers
+            {
+                Modules.CustomTier ct = new Modules.CustomTier();
+                string name = "Tier" + t.ToString("00");
+                int rating = ((BaseUnityPlugin)this).Config.Bind<int>("CustomTiers", name + " Min Rating Threshold", ((t-1) * 1000) , "The Rating for " + name).Value;
+                string display = ((BaseUnityPlugin)this).Config.Bind<string>("CustomTiers", name + " Display Name", "T"+t.ToString("00"), "The Displayed String for " + name + ". Only first 4 chars are readable on the moon catalog").Value;
+                ct.uniqueName = name;
+                ct.minRating = rating;
+                ct.displayName = display;
+                customTiers.Add(ct);
+            }
+        }
 
-
-            //custom tiers
-
+        internal void SetupLateConfig()
+        {
+            Plugin.Logger.LogDebug("Moons to add to config = " + Modules.CustomModes.moons);
+            foreach (ExtendedLevel level in Modules.CustomModes.moons)
+            {
+                Modules.CustomRating cr = new Modules.CustomRating();
+                Plugin.Logger.LogDebug("Adding Moon to config:- " + level.UniqueIdentificationName + " as: " + level.NumberlessPlanetName);
+                string name = level.UniqueIdentificationName;
+                string display = level.NumberlessPlanetName;
+                //int rating = ((BaseUnityPlugin)this).Config.Bind<int>("CustomRatings", name + " Custom Rating", int.MinValue, "The Rating for " + name + " as set by you to fit in with your custom tiers.").Value;
+                string rating = ((BaseUnityPlugin)this).Config.Bind<string>("CustomRatings", display, null, "The Rating for " + display + " as set by you to fit in with your custom tiers. Any value that is not an integer will be rejected and set as 'Unrated' tier").Value;
+                cr.uniqueName = name;
+                if (int.TryParse(rating, out int resultRating))
+                {
+                    cr.rating = resultRating;
+                }
+                else
+                {
+                    cr.rating = int.MinValue;
+                }
+                cr.displayName = display;
+                customRatings.Add(cr);
+            }
         }
 
         internal void RemoveOrphanedConfigs()
