@@ -24,6 +24,7 @@ namespace DynamicMoonRatings
         internal static bool speedrunningMode;
         internal static List<Modules.CustomTier> customTiers = new List<Modules.CustomTier>();
         internal static List<Modules.CustomRating> customRatings = new List<Modules.CustomRating>();
+        internal static bool moonConfigLoaded = false; //check for if the moon config is loaded, so you dont try to update moon ratings until AFTER the config has been loaded when using custom ratings
 
         private void Awake()
         {
@@ -126,13 +127,9 @@ namespace DynamicMoonRatings
                 {
                     cr.rating = Int16.MinValue;
                 }
-                if(Plugin.ratingsVersion == "CUSTOM")
-                {
-                    level.SelectableLevel.riskLevel = CustomModes.updateCustomDisplayedString(cr.rating);
-                    Plugin.Logger.LogDebug(level.NumberlessPlanetName.ToString() + " custom rating is set: " + cr.rating.ToString());
-                }
                 cr.displayName = display;
                 customRatings.Add(cr);
+                moonConfigLoaded = true; //set this to true so that the moon ratings can be updated after the config has been loaded.
             }
         }
 

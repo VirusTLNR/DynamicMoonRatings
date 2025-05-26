@@ -16,7 +16,7 @@ namespace DynamicMoonRatings.Modules
             switch(Plugin.ratingsVersion)
             {
                 case "CUSTOM":
-                    //newRating = CustomModes.GetCustomRating(level); //this should never occur anymore as the rating is set at config load
+                    newRating = CustomModes.GetCustomRating(level); //this should never occur anymore as the rating is set at config load
                     break;
                 case "LLL":
                     newRating = CalculateDifficultyLLL(level); 
