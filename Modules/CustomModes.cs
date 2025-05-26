@@ -29,7 +29,7 @@ namespace DynamicMoonRatings.Modules
 
         internal static int GetCustomRating(ExtendedLevel level)
         {
-            int rating = int.MinValue;
+            int rating = Int16.MinValue;
             if (Plugin.customRatings.Any(x => x.uniqueName == level.UniqueIdentificationName))
             {
                 rating = Plugin.customRatings.Find(x => x.uniqueName == level.UniqueIdentificationName).rating;

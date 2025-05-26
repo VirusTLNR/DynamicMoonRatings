@@ -4,6 +4,7 @@ using BepInEx.Logging;
 using DynamicMoonRatings.Modules;
 using HarmonyLib;
 using LethalLevelLoader;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -91,7 +92,7 @@ namespace DynamicMoonRatings
             
             //custom tiers - must be before custom moons in the loading process as custom moons uses the first tiers rating as a default.
             tierCount = ((BaseUnityPlugin)this).Config.Bind<int>("TierCustomisation", "Tier Count", 10, new ConfigDescription("How many tiers you would like.. after changing this value you will need to start the game and close it to modify the other values below (WARNING - changing to a lower value will result in lost ratings/displayed names for higher tiers you no longer use!)", new AcceptableValueRange<int>(1, 25))).Value;
-            customTiers.Add(new CustomTier() { uniqueName = "Tier 0", minRating = int.MinValue, displayName = "Unknown" }); //for any moon without a config
+            customTiers.Add(new CustomTier() { uniqueName = "Tier 0", minRating = Int16.MinValue, displayName = "Unknown" }); //for any moon without a config
             for (int t = 1; t <= tierCount; t++) //allow for 25 custom tiers
             {
                 Modules.CustomTier ct = new Modules.CustomTier();
@@ -123,7 +124,7 @@ namespace DynamicMoonRatings
                 }
                 else
                 {
-                    cr.rating = int.MinValue;
+                    cr.rating = Int16.MinValue;
                 }
                 cr.displayName = display;
                 customRatings.Add(cr);
