@@ -93,7 +93,7 @@ namespace DynamicMoonRatings.Modules
             string rLetter = string.Empty;
             string rNumber = string.Empty;
             float displayRating = rating / 10;
-            int modifiedRating = (int)(displayRating - (1000 * (int)Math.Floor((decimal)(displayRating / 1000))));
+            int modifiedRating = (int)(displayRating - (1000 * (int)Math.Floor((displayRating / 1000))));
             if (n.Contains("A"))
             {
                 if (displayRating >= 0 && displayRating <= 999)
