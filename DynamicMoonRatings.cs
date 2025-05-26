@@ -129,6 +129,7 @@ namespace DynamicMoonRatings
                 if(Plugin.ratingsVersion == "CUSTOM")
                 {
                     level.SelectableLevel.riskLevel = CustomModes.updateCustomDisplayedString(cr.rating);
+                    Plugin.Logger.LogDebug(level.NumberlessPlanetName.ToString() + " custom rating is set: " + cr.rating.ToString());
                 }
                 cr.displayName = display;
                 customRatings.Add(cr);

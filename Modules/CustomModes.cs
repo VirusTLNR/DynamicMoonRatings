@@ -27,7 +27,7 @@ namespace DynamicMoonRatings.Modules
     {
         internal static List<ExtendedLevel> moons = LethalLevelLoader.PatchedContent.ExtendedLevels;
 
-        internal static int GetCustomRating(ExtendedLevel level)
+        internal static int GetCustomRating(ExtendedLevel level) //not used anymore
         {
             int rating = Int16.MinValue;
             if (Plugin.customRatings.Any(x => x.uniqueName == level.UniqueIdentificationName))
@@ -35,11 +35,11 @@ namespace DynamicMoonRatings.Modules
                 rating = Plugin.customRatings.Find(x => x.uniqueName == level.UniqueIdentificationName).rating;
             }
             Plugin.Logger.LogDebug(level.NumberlessPlanetName.ToString() + " custom rating is set: " + rating.ToString());
-            level.SelectableLevel.riskLevel = updateDisplayedString(rating);
+            level.SelectableLevel.riskLevel = updateCustomDisplayedString(rating);
             return rating; //nothing done with this yet, config requiring setup first.
         }
 
-        internal static string updateDisplayedString(int rating)
+        internal static string updateCustomDisplayedString(int rating)
         {
             string displayRating = "error";
             foreach (var ratingLevel in Plugin.customTiers.OrderBy(x => x.minRating))
