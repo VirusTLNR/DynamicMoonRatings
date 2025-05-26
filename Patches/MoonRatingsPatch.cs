@@ -17,6 +17,10 @@ namespace DynamicMoonRatings.Patches
         [HarmonyPostfix]
         public static void CalculateExtendedLevelDifficultyRatingPostfix(ref int __result, ExtendedLevel extendedLevel, bool debugResults = false)
         {
+            if(Plugin.ratingsVersion == "CUSTOM")
+            {
+                return; //custom ratings are preset at config load
+            }
             int updatedRating = Modules.RatingsCalculation.RatingSelector(extendedLevel);
             //updatedRating = Modules.Extensions.SetNearestAvailableRating(currentMoonRatingsList, extendedLevel, updatedRating);
             if (updatedRating != -1) //if the rating calculation fails, it will use the original rating.

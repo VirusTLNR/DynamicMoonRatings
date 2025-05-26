@@ -108,7 +108,7 @@ namespace DynamicMoonRatings
 
         internal void SetupLateConfig()
         {
-            Plugin.Logger.LogDebug("Moons to add to config = " + Modules.CustomModes.moons);
+            Plugin.Logger.LogDebug("Moons to add to config = " + Modules.CustomModes.moons.Count);
             foreach (ExtendedLevel level in Modules.CustomModes.moons)
             {
                 Modules.CustomRating cr = new Modules.CustomRating();
@@ -125,6 +125,10 @@ namespace DynamicMoonRatings
                 else
                 {
                     cr.rating = Int16.MinValue;
+                }
+                if(Plugin.ratingsVersion == "CUSTOM")
+                {
+                    level.SelectableLevel.riskLevel = CustomModes.updateCustomDisplayedString(cr.rating);
                 }
                 cr.displayName = display;
                 customRatings.Add(cr);
