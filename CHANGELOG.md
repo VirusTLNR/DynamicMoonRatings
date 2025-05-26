@@ -1,5 +1,10 @@
 ## Changelog
 
+### 1.0.1
+- Fixed an issue with A### display mode
+- Fixed a few ratings logging issues where the correct information was not logged properly
+- Fixed custom moon ratings to be set and updated correctly (you must load a game save once before you can config custom moon ratings! Tiers can be set at any time but may require a game save load if you want more/less tiers)
+
 ### 1.0.0
 - Initial Release - See readme for details on features
 - Added option for Risk Mode (scrap added into the rating calculation) or Difficulty Mode (scrap is generated based off the moon rating which then doesnt include the scrap value in the calculation)

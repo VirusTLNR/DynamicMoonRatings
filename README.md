@@ -5,7 +5,7 @@ Dynamic Moon Ratings aims to be the mod that gives moon ratings an actual point.
 ## Features
 - Two Usage Modes:
     Risk -> Ratings calculation including scrap value. No moon scrap modification.
-    Difficulty -> Ratings calculation excluding scrap value. Does modify moon scrap based off the rating provided.
+    Difficulty -> Ratings calculation excluding scrap value. Scrap spawned is modified based off the rating displayed, days spent ingame and the quota you require.
 
 - Three display Modes:
     'A' -> shows just a letter like vanilla moons (when speedrunning mode is enabled, this will be forced into A### mode)
@@ -23,7 +23,7 @@ Dynamic Moon Ratings aims to be the mod that gives moon ratings an actual point.
 
 
 ## Ratings Calculation Details
-- CUSTOM -> Configure your own ratings and tiers
+- CUSTOM -> Configure your own ratings and tiers in the config, must load into a game save at least once before configuring the moon ratings otherwise they will display as "UNKNOWN" (so new moons added and not configured will show as UNKNOWN too). (Tiers may also require a game save load to update for more configuration)
 
 - LLL -> Uses the original LLL moon rating calculation, applied to all moons. The displayed value is the LLL rating multiplied by 3.5 to fit it into the same scale as V1, the rating order and gap will be identical to how LLL rates them, without interference from moon creators.
 
