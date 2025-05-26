@@ -51,9 +51,9 @@ namespace DynamicMoonRatings.Modules
             }
             if (Plugin.displayMode == "A###")
             {
-                Plugin.Logger.LogDebug(Plugin.displayMode + " CustomDisplayString Set: " + displayRating + (0.1f * rating).ToString("000"));
-
-                return displayRating + (0.1f * rating).ToString("000");
+                int modifiedRating = (int)(rating - (1000 * (int)Math.Floor((decimal)(rating / 1000))));
+                Plugin.Logger.LogDebug(Plugin.displayMode + " CustomDisplayString Set: " + displayRating + (modifiedRating).ToString("000"));
+                return displayRating + (modifiedRating).ToString("000");
             }
             else if (Plugin.displayMode == "A")
             {

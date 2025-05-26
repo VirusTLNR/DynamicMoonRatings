@@ -93,42 +93,43 @@ namespace DynamicMoonRatings.Modules
             string rLetter = string.Empty;
             string rNumber = string.Empty;
             float displayRating = rating / 10;
+            int modifiedRating = (int)(displayRating - (1000 * (int)Math.Floor((decimal)(displayRating / 1000))));
             if (n.Contains("A"))
             {
                 if (displayRating >= 0 && displayRating <= 999)
                 {
                     rLetter = "F";
-                    rNumber = (0.1f * displayRating).ToString("000");
+                    rNumber = (modifiedRating).ToString("000");
                 }
                 else if (displayRating >= 1000 && displayRating <= 1999)
                 {
                     rLetter = "E";
-                    rNumber = (0.1f * displayRating).ToString("000");
+                    rNumber = (modifiedRating).ToString("000");
                 }
                 else if (displayRating >= 2000 && displayRating <= 2999)
                 {
                     rLetter = "D";
-                    rNumber = (0.1f * displayRating).ToString("000");
+                    rNumber = (modifiedRating).ToString("000");
                 }
                 else if (displayRating >= 3000 && displayRating <= 3999)
                 {
                     rLetter = "C";
-                    rNumber = (0.1f * displayRating).ToString("000");
+                    rNumber = (modifiedRating).ToString("000");
                 }
                 else if (displayRating >= 4000 && displayRating <= 4999)
                 {
                     rLetter = "B";
-                    rNumber = (0.1f * displayRating).ToString("000");
+                    rNumber = (modifiedRating).ToString("000");
                 }
                 else if (displayRating >= 5000 && displayRating <= 5999)
                 {
                     rLetter = "A";
-                    rNumber = (0.1f * displayRating).ToString("000");
+                    rNumber = (modifiedRating).ToString("000");
                 }
                 else if (displayRating >= 6000 && displayRating <= 6999)
                 {
                     rLetter = "S";
-                    rNumber = (0.1f * displayRating).ToString("000");
+                    rNumber = (modifiedRating).ToString("000");
                 }
                 else if(displayRating >= 7000)
                 {
