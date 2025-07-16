@@ -2,6 +2,8 @@
 
 Dynamic Moon Ratings aims to be the mod that gives moon ratings an actual point. All clients need this mod installed.
 
+if you are having issues, please report them here: https://discord.com/channels/1168655651455639582/1352724025750585505
+
 ## Features
 - Two Usage Modes:
     Risk -> Ratings calculation including scrap value. No moon scrap modification.
