@@ -13,7 +13,12 @@ namespace DynamicMoonRatings.Modules
         internal static int RatingSelector(ExtendedLevel level)
         {
             int newRating = -1; //for incase the rating calculation fails so we can revert back to the original rating //not implemented yet
-            switch(Plugin.ratingsVersion)
+            if (!level.SelectableLevel.spawnEnemiesAndScrap && Plugin.ratingsVersion != "CUSTOM")
+            {
+                Plugin.Logger.LogWarning("Moon " + level.SelectableLevel.PlanetName.ToString() + " has spawnEnemiesAndScrap set to false, returning -1 as rating! (ignore this if it is a company moon)");
+                return newRating; // -1!
+            }
+            switch (Plugin.ratingsVersion)
             {
                 case "CUSTOM":
                     newRating = CustomModes.GetCustomRating(level); //this should never occur anymore as the rating is set at config load

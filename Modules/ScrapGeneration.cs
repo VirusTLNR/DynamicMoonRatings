@@ -36,6 +36,11 @@ namespace DynamicMoonRatings.Modules
 
             //rating value
             float origRating = Modules.RatingsCalculation.RatingSelector(LevelManager.GetExtendedLevel(__instance.currentLevel)); //CHANGED TO USE THE RATINGS VERSION SELECTOR.. POTENTIALLY DIFFERENT SCRAP GEN VERSION AND RATING VERSION MAY CAUSE UNINTENDED EFFECTS
+            if (origRating == -1 || !__instance.currentLevel.spawnEnemiesAndScrap)
+            { //this should never occur as company moons dont spawn scrap anyway.
+                Plugin.Logger.LogWarning("Moon: " + __instance.currentLevel.PlanetName + " | Cannot modify scrap spawns, if this is a Company Moon that has no scrap, ignore this.");
+                return;
+            }
 
             //compatibility with CUSTOM ratings...
             float rating = (Plugin.ratingsVersion == "CUSTOM" ? 10 : 1) * origRating; //10 x for CUSTOM, 1 x for others
