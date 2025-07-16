@@ -129,7 +129,11 @@ namespace DynamicMoonRatings
                 }
                 cr.displayName = display;
                 customRatings.Add(cr);
-                moonConfigLoaded = true; //set this to true so that the moon ratings can be updated after the config has been loaded.
+            }
+            moonConfigLoaded = true; //set this to true so that the moon ratings can be updated after the config has been loaded.
+            foreach (ExtendedLevel level in Modules.CustomModes.moons)
+            {
+                LevelManager.CalculateExtendedLevelDifficultyRating(level);
             }
         }
 
